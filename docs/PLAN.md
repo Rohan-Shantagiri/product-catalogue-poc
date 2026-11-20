@@ -614,7 +614,7 @@ docker compose up --build        # the only command; no .env needed
 | Repository contract | Vitest, **one shared suite** | `runProductRepositoryContract(makeRepo)` runs against the fixture source and against Fake Store with a stubbed `fetch` serving the recorded payload. **Any new data source must pass it.** |
 | Adapters | Vitest, injected `fetch` stub | Fake Store: timeout, retry once, invalid payload, single-flight, failures not cached, stale-on-error. Image fetcher: allowlist, content type, size cap. **SMTP sender through nodemailer `jsonTransport`**, asserting the real composed headers and body with no network |
 | HTTP integration | Vitest + supertest on `createApp(fakes)` | Every endpoint's success and error paths. **Every response body is `parse`d with its contracts schema.** Also `X-Request-Id`, cache headers, 413, 415, the 429 on the 6th POST, and a strict schema rejecting `title`/`price` |
-| UI | Vitest + Testing Library + user-event + **MSW** | One file per AC (below). MSW runs with `onUnhandledRequest: 'error'`; responses come from typed factories (`makeProductDto()`). **Handlers never implement business logic.** Each test uses a fresh `QueryClient` with retries off. Queries use roles and labels only. |
+| UI | Vitest + Testing Library + user-event + **MSW** | One file per AC (below). MSW runs with `onUnhandledFrame: 'error'`; responses come from typed factories (`makeProductDto()`). **Handlers never implement business logic.** Each test uses a fresh `QueryClient` with retries off. Queries use roles and labels only. |
 | Smoke (Should) | `scripts/smoke.sh` (CI and local) | `PRODUCT_SOURCE=fixture docker compose up -d --wait`. Then, through :8080: health returns ok; top-rated has 5 items; POSTing an enquiry returns 202; **Mailpit `GET /api/v1/messages` shows 1 message**, proving the sales-inbox AC end to end |
 | E2E (Could) | Playwright | Click-through of all 5 ACs |
 
@@ -770,7 +770,7 @@ Any `fix:`, `test:` or `refactor:` commits from reviews sit between these. Keep 
 
 ### Development loop (every task)
 1. **Give the agent one task**, naming the spec sections it needs (e.g. *"P2: Fake Store adapter. Follow PLAN §5.2, §7 and §15.1. Tests first."*). One task per prompt, never a whole phase.
-2. **Tests first for business rules.** For top rated (D1), search (D2), money (D5) and the enquiry email (§8.3), write or approve the test cases from §16.1 and §8.3 *before* the implementation, so the AI's tests can't simply mirror its own bug.
+2. **Spec-first TDD for every development task.** Derive a scoped spec and observable examples from this plan before editing production code. Write and run the relevant tests first, confirm each fails for the expected reason, implement the smallest change that passes, and refactor with tests green. Use reproducible smoke checks for behavior that needs a running stack. For business rules, use the agreed cases in §16.1 and §8.3. The walking skeleton has a [Phase 1 specification](PHASE-1-SPEC.md).
 3. The agent implements; `npm run verify` must be green.
 4. **Review the diff yourself** (`git diff`): layering, naming, error paths, scope creep. Ask for fixes, or fix by hand.
 5. **Record as you go:** new assumptions → `DECISIONS.md`; AI mistakes → the `AI_USAGE.md` mistake log (written by you); prompts that worked → `AI_USAGE.md`.

@@ -1,0 +1,72 @@
+name: catalogue
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    stop_grace_period: 12s
+    environment:
+      PORT: "3000"
+      HOST: "0.0.0.0"
+      NODE_ENV: production
+      TRUST_PROXY: "true"
+      SMTP_HOST: mailpit
+      PUBLIC_WEB_URL: http://localhost:${WEB_PORT:-8080}
+      LOG_LEVEL: ${LOG_LEVEL:-}
+      PRODUCT_SOURCE: ${PRODUCT_SOURCE:-}
+      FAKESTORE_BASE_URL: ${FAKESTORE_BASE_URL:-}
+      UPSTREAM_TIMEOUT_MS: ${UPSTREAM_TIMEOUT_MS:-}
+      CATALOGUE_CACHE_TTL_SECONDS: ${CATALOGUE_CACHE_TTL_SECONDS:-}
+      CATALOGUE_CURRENCY: ${CATALOGUE_CURRENCY:-}
+      IMAGE_ALLOWED_HOSTS: ${IMAGE_ALLOWED_HOSTS:-}
+      MERCHANDISING_FILE: ${MERCHANDISING_FILE:-}
+      SMTP_PORT: ${SMTP_PORT:-}
+      SMTP_SECURE: ${SMTP_SECURE:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SALES_INBOX_EMAIL: ${SALES_INBOX_EMAIL:-}
+      ENQUIRY_FROM_EMAIL: ${ENQUIRY_FROM_EMAIL:-}
+      ENQUIRY_RATE_LIMIT_MAX: ${ENQUIRY_RATE_LIMIT_MAX:-}
+      ENQUIRY_RATE_LIMIT_WINDOW_SECONDS: ${ENQUIRY_RATE_LIMIT_WINDOW_SECONDS:-}
+    volumes:
+      - ./apps/api/config:/app/apps/api/config:ro
+    ports:
+      - "127.0.0.1:${API_PORT:-3000}:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    depends_on: [mailpit]
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    ports:
+      - "${WEB_PORT:-8080}:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  mailpit:
+    image: axllent/mailpit:v1.34
+    ports:
+      - "${MAILPIT_UI_PORT:-8025}:8025"

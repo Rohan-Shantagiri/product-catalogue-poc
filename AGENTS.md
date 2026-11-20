@@ -41,6 +41,9 @@ Workspaces: packages/contracts (zod schemas + types) · apps/api (Koa) · apps/w
 
 ## Working agreement
 
+- Use spec-first TDD for every development task. Derive acceptance examples from PLAN, write
+  and run the smallest failing test, then implement, refactor, and run the phase checks. Use a
+  reproducible smoke check for behavior that needs a running stack.
 - Implement only the current task in PLAN §16. Items in §2 "Won't" are out of scope.
 - Unclear? Choose the simplest option consistent with the spec, add it to DECISIONS.md →
   "Assumptions (agent)", continue.

@@ -7,6 +7,9 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "zod": "^4.6"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
