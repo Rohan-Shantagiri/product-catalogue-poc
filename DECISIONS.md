@@ -2,12 +2,13 @@
 
 ## Acceptance criteria assumptions
 
-The planned rules for curation, search, enquiries, currency and category URLs are in [plan §4](docs/PLAN.md#4-decisions-copy-these-into-decisionsmd). Phase 2 implements the catalogue decisions below.
+The planned rules for curation, search, enquiries, currency and category URLs are in [plan §4](docs/PLAN.md#4-decisions-copy-these-into-decisionsmd). Phases 2 and 3 implement the catalogue and enquiry decisions below.
 
 - **D1 and D8.** Seeded merchandising picks drive the home and category lists. Categories with no picks fall back to rating, review count and then source order. Unknown configured IDs are skipped and logged.
 - **D2, D5 and D7.** Search matches normalised word prefixes with title matches first. Prices use integer cents in the configured currency. Category names and sorted slugs derive from the upstream names.
 - **D4, D6 and D9.** The server proxies image URLs and loads Fake Store products in one cached collection request. Fixture mode uses the recorded catalogue and a bundled image. Product IDs remain opaque outside the source adapter.
 - **D10.** Catalogue JSON is versioned, list results use an envelope, and errors use shared Problem Details schemas.
+- **D3, D11 and D12.** Enquiries use the catalogue product record, return 202 after SMTP accepts the message, and never send a customer confirmation. The JSON-only route counts attempts by client IP before parsing the body. Local development sends through Mailpit using the same SMTP adapter.
 
 ## Architecture and tooling
 

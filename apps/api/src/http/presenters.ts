@@ -1,6 +1,7 @@
 import {
   categoryListResponseSchema,
   categoryProductsResponseSchema,
+  enquiryAcceptedResponseSchema,
   healthResponseSchema,
   problemDetailsSchema,
   productDtoSchema,
@@ -51,4 +52,8 @@ export function presentCategoryPage(page: {
     topRated: page.topRated.map(toProductDto),
     others: page.others.map(toProductDto),
   });
+}
+
+export function presentEnquiryAccepted(result: { enquiryId: string }) {
+  return enquiryAcceptedResponseSchema.parse(result);
 }

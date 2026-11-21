@@ -29,4 +29,10 @@ The catalogue is available at `/api/v1`. For example, open <http://localhost:808
 
 The default source is Fake Store. Set `PRODUCT_SOURCE=fixture` in your shell or `.env` and run Compose to use the bundled catalogue and local SVG images. To refresh the recorded fixture from Fake Store, run `npm run snapshot -w @catalogue/api` with Node.js 24.
 
+## Enquiry API
+
+Send `POST /api/v1/enquiries` with `Content-Type: application/json` and a catalogue `productId`, customer `name`, and `email`. Phone and message are optional. A successful response contains an `enquiryId` after the SMTP relay accepts the message. The local sales inbox is Mailpit.
+
+The default limit is five JSON enquiry submissions per client IP in ten minutes. See the [Phase 3 specification](docs/PHASE-3-SPEC.md) for the delivery and request checks.
+
 See the [implementation plan](docs/PLAN.md), [decisions](DECISIONS.md), and [AI usage notes](AI_USAGE.md).

@@ -1,4 +1,7 @@
+import { randomUUID } from "node:crypto";
 import type { Logger } from "pino";
+import { SmtpEmailSender } from "./adapters/email/smtp-email-sender.js";
+
 import { HttpImageFetcher } from "./adapters/images/http-image-fetcher.js";
 import { PlaceholderImageFetcher } from "./adapters/images/placeholder-image-fetcher.js";
 import { JsonMerchandisingSource } from "./adapters/merchandising/json-merchandising-source.js";
@@ -13,7 +16,14 @@ import { createLogger } from "./logger.js";
 import type { ImageFetcher } from "./ports/image-fetcher.js";
 import { CatalogueService } from "./services/catalogue-service.js";
 
-type ApiOptions = { request?: typeof globalThis.fetch; logger?: Logger };
+import type { EmailSender } from "./ports/email-sender.js";
+import { EnquiryService } from "./services/enquiry-service.js";
+
+type ApiOptions = {
+  request?: typeof globalThis.fetch;
+  logger?: Logger;
+  emailSender?: EmailSender;
+};
 
 export function composeApi(input: NodeJS.ProcessEnv, options: ApiOptions = {}) {
   const env = loadEnv(input);
@@ -53,8 +63,9 @@ export function composeApi(input: NodeJS.ProcessEnv, options: ApiOptions = {}) {
       logger.warn({ event: "catalogue.stale_served" });
     },
   );
+  const products = new InMemoryProductRepository(loader.load);
   const catalogue = new CatalogueService(
-    new InMemoryProductRepository(loader.load),
+    products,
     new JsonMerchandisingSource(env.MERCHANDISING_FILE),
     imageFetcher,
     (event) => {
@@ -65,7 +76,41 @@ export function composeApi(input: NodeJS.ProcessEnv, options: ApiOptions = {}) {
       }
     },
   );
-  const app = createApp({ logger, trustProxy: env.TRUST_PROXY, catalogue });
+  const enquiries = new EnquiryService({
+    products,
+    emails:
+      options.emailSender ??
+      SmtpEmailSender.fromConfig({
+        host: env.SMTP_HOST,
+        port: env.SMTP_PORT,
+        secure: env.SMTP_SECURE,
+        user: env.SMTP_USER,
+        password: env.SMTP_PASS,
+      }),
+    emailConfig: {
+      to: env.SALES_INBOX_EMAIL,
+      from: env.ENQUIRY_FROM_EMAIL,
+      webBaseUrl: env.PUBLIC_WEB_URL,
+    },
+    clock: () => new Date(),
+    createId: randomUUID,
+    report: ({ type, enquiryId, productId }) => {
+      const event = { event: type, enquiryId, productId };
+      if (type === "enquiry.failed") logger.warn(event);
+      else logger.info(event);
+    },
+  });
+  const app = createApp({
+    logger,
+    trustProxy: env.TRUST_PROXY,
+    catalogue,
+    enquiries,
+    enquiryLimits: {
+      max: env.ENQUIRY_RATE_LIMIT_MAX,
+      windowSeconds: env.ENQUIRY_RATE_LIMIT_WINDOW_SECONDS,
+    },
+  });
+
   logger.info({
     event: "catalogue.source_selected",
     source: env.PRODUCT_SOURCE,
