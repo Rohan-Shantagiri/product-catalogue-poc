@@ -1,3 +1,8 @@
+export {
+  enquiryAcceptedResponseSchema,
+  enquiryRequestSchema,
+} from "./enquiry.js";
+export type { EnquiryAcceptedResponse, EnquiryRequest } from "./enquiry.js";
 export { healthResponseSchema } from "./health.js";
 export type { HealthResponse } from "./health.js";
 export { errorCodeSchema, problemDetailsSchema } from "./problem.js";
