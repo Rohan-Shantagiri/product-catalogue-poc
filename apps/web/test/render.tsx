@@ -10,9 +10,10 @@ export function renderCatalogue(path: string, routes = appRoutes) {
     defaultOptions: { queries: { retry: false } },
   });
   const router = createMemoryRouter(routes, { initialEntries: [path] });
-  return render(
+  const result = render(
     <AppProviders queryClient={queryClient}>
       <RouterProvider router={router} />
     </AppProviders>,
   );
+  return { ...result, router };
 }
