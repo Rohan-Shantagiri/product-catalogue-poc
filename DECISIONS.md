@@ -68,6 +68,10 @@ The planned rules for curation, search, enquiries, currency and category URLs ar
 | Other clients  | Reuse the versioned API and shared contracts. Per-client authentication and rate limits would be separate work.                                                                                                                                                                                                                                                |
 | AWS            | Serve static web assets via S3 and CloudFront, and route `/api/*` to ECS Fargate or App Runner with `/api/health`. Send stdout to CloudWatch and move deployment configuration to SSM or Secrets Manager. Replace instance-local rate limits and caches with shared controls when scaling. Put a CDN in front of product images and update the presenter URLs. |
 
+### Future scaling
+
+As traffic and team ownership grow, use a managed PostgreSQL database to persist catalogue and enquiry data. Move the React frontend and backend into separate repositories with independent build and deployment pipelines, connected by a versioned API contract. When catalogue browsing and enquiry processing need to scale independently, extract them into separate backend microservices. Each service owns its data.
+
 ## Next day
 
 1. Persist enquiries with a transactional outbox and retries.
