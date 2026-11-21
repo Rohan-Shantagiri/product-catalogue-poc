@@ -5,6 +5,7 @@ import { NotFoundPage } from "../../../app/NotFoundPage";
 import { isNotFound } from "../../../shared/api/api-error";
 import { pageTitle } from "../../../shared/lib/brand";
 import { ErrorState, StatusMessage } from "../../../shared/ui/Status";
+import { EnquirySection } from "../../enquiry/containers/EnquirySection";
 import { ProductDetails } from "../components/ProductDetails";
 import { productQuery } from "../queries";
 import styles from "./Pages.module.css";
@@ -20,7 +21,14 @@ export function ProductPage() {
     <div className={styles.page}>
       <title>{pageTitle(product?.title ?? "Product")}</title>
       {product ? (
-        <ProductDetails product={product} />
+        <>
+          <ProductDetails product={product} />
+          <EnquirySection
+            key={product.id}
+            productId={product.id}
+            title={product.title}
+          />
+        </>
       ) : (
         <>
           <h1 className={styles.heading}>Product</h1>

@@ -14,6 +14,9 @@ const enquiryFields = z.strictObject({
   message: z.string().trim().max(2000).optional(),
 });
 
+export const enquiryFormSchema = enquiryFields.omit({ productId: true });
+export type EnquiryFormValues = z.infer<typeof enquiryFormSchema>;
+
 export const enquiryRequestSchema = enquiryFields.transform(
   ({ phone, ...request }): z.output<typeof enquiryFields> =>
     phone ? { ...request, phone } : request,

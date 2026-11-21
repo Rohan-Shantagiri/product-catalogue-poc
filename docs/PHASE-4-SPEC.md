@@ -35,3 +35,9 @@ This specification follows [PLAN §9](PLAN.md#9-frontend-spec) and the [Phase 4 
 
 - Selecting a category, opening a product, or returning to Featured requests a native view transition where supported. The main content slides and cross-fades briefly while the header stays in place.
 - Product cards show a directional cue on hover and keyboard focus. Reduced-motion mode keeps that cue visible without movement and removes the route animation. Links continue to work in browsers without the native transition API.
+
+## Search and enquiry tasks
+
+- Search from the header trims a 1–100 character query, navigates to `/search?q=`, and sends the query to the API. The URL drives the input and results when going back or opening a link. Empty searches make no request. The page shows the server order, loading, empty and retry states.
+- The product page opens an inline enquiry form and focuses Full name. The form uses the shared customer-field validation, marks errors accessibly, and retains values after a failed request. A pending submission disables Send enquiry.
+- The API receives the product ID and validated customer fields. An accepted response replaces the form with a focused thank-you. Field errors, missing products, rate limiting and delivery failures have specific feedback.
