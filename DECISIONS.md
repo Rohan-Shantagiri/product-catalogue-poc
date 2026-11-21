@@ -13,11 +13,22 @@ The planned rules for curation, search, enquiries, currency and category URLs ar
 ## Architecture and tooling
 
 - npm workspaces keep the API, web and shared contracts independently buildable in one repository.
-- React is the web client. Koa will keep transport concerns separate from the catalogue and enquiry logic.
+- React is the web client. Koa keeps transport concerns separate from the catalogue and enquiry logic.
 - Node.js 24 is the project runtime. TypeScript 6 is pinned to the 6.0 series for compatibility with the selected ESLint tooling.
 - ESLint's restricted import patterns cover known package names. A local path-aware rule also checks resolved relative imports, so changing the nesting of a file or re-exporting an adapter cannot bypass the layer rules.
 
 - Phase 4 uses React Hook Form and its Zod resolver to validate enquiries with the shared contract.
+
+## Architecture decisions
+
+| Context                                         | Decision and consequences                                                                                                                                                                                                                   |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Keep contracts in sync across client and server | Use an npm-workspaces monorepo so contract, API, and UI changes can be tested together. Separate repositories would add an independent package release step.                                                                                |
+| Own the service boundaries                      | Use Koa and constructor-injected ports. Express and Fastify offer other lightweight HTTP stacks. NestJS and a DI container would add conventions that the PoC can enforce with its existing small composition root and lint rules.          |
+| Keep upstream data out of the browser           | The API loads the Fake Store collection lazily, caches it, and publishes opaque IDs and proxied images. nginx keeps API and assets same-origin and applies CSP. Direct links or calls to Fake Store would bypass that boundary.             |
+| Keep client contracts stable                    | Use versioned routes, Zod schemas, list envelopes, and RFC 9457 Problem Details. Arrays and ad hoc error keys would make later pagination and client error handling harder.                                                                 |
+| Reproduce the enquiry handoff                   | Use Mailpit with SMTP and a per-IP throttle. The customer sees the confirmation after the SMTP relay accepts the message. Using a console transport would skip the delivery path; persisting leads requires an outbox and retention policy. |
+| Make clean installs reproducible                | Use Node.js 24 and the TypeScript 6 series from the plan, with the lockfile checked in. Node 26 and TypeScript 7 were considered. The selected versions match the repository's ESLint tooling and Docker build.                             |
 
 ## User interface
 
@@ -41,8 +52,34 @@ The planned rules for curation, search, enquiries, currency and category URLs ar
 
 ## Dropped or simplified
 
+- The catalogue covers browsing and enquiries. Accounts, cart, checkout, and payment workflows are outside that scope.
+- The sales inbox is the current enquiry record. A database, migrations, and retention controls would add a second record for the same enquiry.
+- Curation uses a versioned file until the business needs an admin or CMS workflow. The in-memory product source fits the small fixture. Pagination and SEO rendering can follow when product volume or discovery warrants them.
+- Mailpit keeps the real SMTP path in development. The in-memory throttle provides the initial abuse control. A CAPTCHA can be evaluated against traffic, keeping the form clear of hidden fields that browser autofill might populate.
+
 ## How the design grows beyond the PoC
+
+| Change         | Path and caveat                                                                                                                                                                                                                                                                                                                                                |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Product source | Add an adapter behind the repository port and pass the contract suite. Map curated IDs or use SKUs when the new source has a different ID space. Push queries to the source when loading the full catalogue becomes expensive.                                                                                                                                 |
+| Email          | Keep the SMTP adapter for a new relay. On ECS, an SES API adapter can use the task's IAM role. A transactional outbox is needed for durable retries.                                                                                                                                                                                                           |
+| Look and feel  | Change tokens and presentational components for a reskin. New pages and navigation also change routes and containers.                                                                                                                                                                                                                                          |
+| Curation       | Add a `MerchandisingSource` adapter for CMS data and keep the service selection policy.                                                                                                                                                                                                                                                                        |
+| Other clients  | Reuse the versioned API and shared contracts. Per-client authentication and rate limits would be separate work.                                                                                                                                                                                                                                                |
+| AWS            | Serve static web assets via S3 and CloudFront, and route `/api/*` to ECS Fargate or App Runner with `/api/health`. Send stdout to CloudWatch and move deployment configuration to SSM or Secrets Manager. Replace instance-local rate limits and caches with shared controls when scaling. Put a CDN in front of product images and update the presenter URLs. |
 
 ## Next day
 
+1. Persist enquiries with a transactional outbox and retries.
+2. Add CAPTCHA based on observed abuse.
+3. Move per-category curation into a CMS.
+4. Add Playwright end-to-end checks in CI.
+5. Generate OpenAPI from the Zod contracts.
+6. Add an SES adapter and infrastructure definitions.
+7. Optimise images and serve them through a CDN.
+8. Add OpenTelemetry tracing.
+9. Add SSR if organic search becomes a requirement.
+
 ## Deviations from plan
+
+- The single draft pull request into `main` was opened after the Phase 4 push.
