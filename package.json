@@ -1,0 +1,37 @@
+{
+  "name": "product-catalogue-poc",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:contracts": "npm run build -w @catalogue/contracts",
+    "dev": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d mailpit && npm run build:contracts && concurrently -k -n api,web \"npm run dev -w @catalogue/api\" \"npm run dev -w @catalogue/web\"",
+    "dev:web": "npm run dev -w @catalogue/web",
+    "build": "npm run build:contracts && npm run build -w @catalogue/api -w @catalogue/web",
+    "typecheck": "npm run build:contracts && npm run typecheck --workspaces --if-present",
+    "test": "npm run build:contracts && npm run test --workspaces --if-present",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "npm run build:contracts && npm run format:check && npm run lint && npm run typecheck --workspaces --if-present && npm run test --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/contracts",
+    "apps/api",
+    "apps/web"
+  ],
+  "devDependencies": {
+    "@eslint/js": "^9",
+    "concurrently": "^10",
+    "eslint": "^9",
+    "eslint-config-prettier": "^10",
+    "eslint-plugin-jsx-a11y": "^6.10",
+    "eslint-plugin-react-hooks": "^7",
+    "prettier": "^3.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.73"
+  }
+}

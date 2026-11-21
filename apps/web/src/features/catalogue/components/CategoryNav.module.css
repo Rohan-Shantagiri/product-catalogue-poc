@@ -1,0 +1,40 @@
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding-inline: var(--space-4);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  font-size: var(--font-size-small);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.link:hover {
+  border-color: var(--color-action);
+  background: var(--color-status-bg);
+  color: var(--color-action);
+}
+
+.link[aria-current="page"] {
+  border-color: var(--color-action);
+  background: var(--color-action);
+  color: var(--color-surface);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .link {
+    transition:
+      background-color var(--motion-fast),
+      border-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+}

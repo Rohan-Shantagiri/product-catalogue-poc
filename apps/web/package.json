@@ -1,0 +1,33 @@
+{
+  "name": "@catalogue/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@catalogue/contracts": "0.1.0",
+    "@hookform/resolvers": "^7.0.8",
+    "@tanstack/react-query": "^5.108.2",
+    "react": "^19.3",
+    "react-dom": "^19.3",
+    "react-hook-form": "7.92",
+    "react-router": "8.5",
+    "zod": "4.6"
+  },
+  "devDependencies": {
+    "@testing-library/react": "16.3",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6",
+    "jsdom": "^31.0.1",
+    "msw": "^3.0.7",
+    "vite": "^8.3",
+    "vitest": "^5.1"
+  }
+}

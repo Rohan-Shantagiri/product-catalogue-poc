@@ -1,0 +1,23 @@
+.panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-large);
+  padding: clamp(var(--space-5), 5vw, var(--space-8));
+  background: var(--color-surface);
+  box-shadow: var(--shadow-panel);
+}
+
+.panel h1 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-heading);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.panel p {
+  color: var(--color-muted);
+}
+
+.errorPage {
+  width: min(100% - 2 * var(--space-4), var(--content-width));
+  margin: clamp(var(--space-5), 5vw, var(--space-8)) auto;
+}
