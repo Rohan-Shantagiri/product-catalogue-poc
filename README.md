@@ -23,4 +23,10 @@ Vite serves the shell at <http://localhost:5173> and proxies API requests to the
 
 Run `npm run verify` for formatting, lint, type checking, and tests. Run `npm run build` to build the workspaces.
 
+## Catalogue API
+
+The catalogue is available at `/api/v1`. For example, open <http://localhost:8080/api/v1/collections/top-rated> for the ordered home selection, <http://localhost:8080/api/v1/categories> for categories, or <http://localhost:8080/api/v1/products?q=men> for search.
+
+The default source is Fake Store. Set `PRODUCT_SOURCE=fixture` in your shell or `.env` and run Compose to use the bundled catalogue and local SVG images. To refresh the recorded fixture from Fake Store, run `npm run snapshot -w @catalogue/api` with Node.js 24.
+
 See the [implementation plan](docs/PLAN.md), [decisions](DECISIONS.md), and [AI usage notes](AI_USAGE.md).

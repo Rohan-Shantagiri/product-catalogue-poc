@@ -274,7 +274,7 @@ type ErrorCode = 'VALIDATION_FAILED' | 'NOT_FOUND' | 'PRODUCT_NOT_FOUND' | 'UNSU
 | any other `/api/*` | n/a | 404 `NOT_FOUND` as problem+json | n/a |
 
 **Rules:**
-- Malformed `:id` or `:slug` (`^[a-z0-9-]{1,64}$`) is a 404.
+- Malformed `:id` (`^[A-Za-z0-9_-]{1,64}$`, D6) or `:slug` (`^[a-z0-9-]{1,64}$`) is a 404.
 - `collections/:slug` is the extension point for future curated lists; only `top-rated` exists now.
 - Every response carries `X-Request-Id` and `X-Content-Type-Options: nosniff`; problem bodies include `requestId`.
 - Never serialise domain objects directly: always go through the presenters.
@@ -770,7 +770,7 @@ Any `fix:`, `test:` or `refactor:` commits from reviews sit between these. Keep 
 
 ### Development loop (every task)
 1. **Give the agent one task**, naming the spec sections it needs (e.g. *"P2: Fake Store adapter. Follow PLAN §5.2, §7 and §15.1. Tests first."*). One task per prompt, never a whole phase.
-2. **Spec-first TDD for every development task.** Derive a scoped spec and observable examples from this plan before editing production code. Write and run the relevant tests first, confirm each fails for the expected reason, implement the smallest change that passes, and refactor with tests green. Use reproducible smoke checks for behavior that needs a running stack. For business rules, use the agreed cases in §16.1 and §8.3. The walking skeleton has a [Phase 1 specification](PHASE-1-SPEC.md).
+2. **Spec-first TDD for every development task.** Derive a scoped spec and observable examples from this plan before editing production code. Write and run the relevant tests first, confirm each fails for the expected reason, implement the smallest change that passes, and refactor with tests green. Use reproducible smoke checks for behavior that needs a running stack. For business rules, use the agreed cases in §16.1 and §8.3. Use the specifications for the [walking skeleton](PHASE-1-SPEC.md) and the [catalogue API](PHASE-2-SPEC.md).
 3. The agent implements; `npm run verify` must be green.
 4. **Review the diff yourself** (`git diff`): layering, naming, error paths, scope creep. Ask for fixes, or fix by hand.
 5. **Record as you go:** new assumptions → `DECISIONS.md`; AI mistakes → the `AI_USAGE.md` mistake log (written by you); prompts that worked → `AI_USAGE.md`.

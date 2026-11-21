@@ -6,9 +6,8 @@ import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { composeApi } from "../composition-root.js";
 import { createLogger } from "../logger.js";
-import { createApp } from "./app.js";
 
-const app = createApp({ logger: createLogger("silent"), trustProxy: false });
+const { app } = composeApi({ LOG_LEVEL: "silent" });
 
 describe("API liveness: GET /api/health", () => {
   it.each(["fakestore", "fixture"])(
@@ -50,7 +49,8 @@ describe("P1-03: structured API request logs", () => {
     const logger = createLogger("info", {
       write: (line: string) => lines.push(line),
     });
-    const loggedApp = createApp({ logger, trustProxy: false });
+    const { app: loggedApp } = composeApi({}, { logger });
+    lines.length = 0;
 
     await request(loggedApp.callback())
       .post("/api/private-value?query=example-secret")
