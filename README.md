@@ -100,4 +100,14 @@ If a preview is running, give the smoke stack different ports. Use Bash on Linux
 WEB_PORT=18085 API_PORT=13085 MAILPIT_UI_PORT=18029 bash scripts/smoke.sh
 ```
 
+## Time spent
+
+| Activity                                     |                    Actual time |
+| -------------------------------------------- | -----------------------------: |
+| Planning                                     |                        2 hours |
+| Building (specification and code generation) |                        2 hours |
+| Testing                                      |                         1 hour |
+| Reviewing                                    | 15–20 minutes per phase review |
+| **Subtotal before reviewing**                |                    **5 hours** |
+
 See the [implementation plan](docs/PLAN.md), [decisions](DECISIONS.md), [security controls](SECURITY.md), and [AI usage record](AI_USAGE.md).
