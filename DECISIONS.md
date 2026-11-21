@@ -17,6 +17,10 @@ The planned rules for curation, search, enquiries, currency and category URLs ar
 - Node.js 24 is the project runtime. TypeScript 6 is pinned to the 6.0 series for compatibility with the selected ESLint tooling.
 - ESLint's restricted import patterns cover known package names. A local path-aware rule also checks resolved relative imports, so changing the nesting of a file or re-exporting an adapter cannot bypass the layer rules.
 
+## User interface
+
+- **Phase 4 storefront polish.** Use the first curated product as the featured item, give the current category a clear selected state, and add short entrance, hover, focus, and page transitions. The featured panel gives shoppers a starting point, the selected state shows where they are, and motion helps them follow navigation. Use the images supplied by the catalogue API and respect the system's reduced-motion preference.
+
 ## Development workflow
 
 - Adopted spec-first TDD during Phase 1. For every development task, write a scoped specification from PLAN with observable acceptance criteria and examples. Write the relevant unit or integration test first and confirm it fails for the intended reason. Implement the smallest change that passes it, then refactor with the tests green and run `npm run verify`. Use reproducible smoke checks for container and browser integration.

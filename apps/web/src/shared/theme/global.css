@@ -1,0 +1,72 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-canvas);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: 1.5;
+}
+
+a {
+  color: var(--color-action);
+  text-underline-offset: 0.2em;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+:root {
+  view-transition-name: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #main-content {
+    view-transition-name: catalogue-content;
+  }
+
+  ::view-transition-group(catalogue-content) {
+    animation-duration: var(--motion-route);
+  }
+
+  ::view-transition-old(catalogue-content) {
+    animation: catalogue-exit var(--motion-route) var(--motion-ease) both;
+  }
+
+  ::view-transition-new(catalogue-content) {
+    animation: catalogue-enter var(--motion-route) var(--motion-ease) both;
+  }
+}
+
+@keyframes catalogue-exit {
+  to {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--space-2)));
+  }
+}
+
+@keyframes catalogue-enter {
+  from {
+    opacity: 0;
+    transform: translateX(var(--space-3));
+  }
+}
